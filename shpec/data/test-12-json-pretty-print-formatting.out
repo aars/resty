@@ -1,0 +1,14 @@
+# [OUT] TEST 12: json pretty-print formatting
+{
+   "bar" : {
+      "cat" : "meow",
+      "dog" : "woof",
+      "fish" : "banana"
+   },
+   "foo" : [
+      1,
+      2,
+      3
+   ]
+}
+

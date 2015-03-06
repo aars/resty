@@ -1,0 +1,9 @@
+#  -*-  restclient -*-
+# [REQ] TEST 5: basic TRACE request
+TRACE /simple.html HTTP/1.1
+User-Agent: curl/7.21.7 (x86_64-apple-darwin10.7.0) libcurl/7.21.7 OpenSSL/1.0.0d zlib/1.2.5 libidn/1.22
+Host: 127.0.0.1:9090
+Accept: */*
+Content-Length: 17
+Content-Type: application/x-www-form-urlencoded
+here is some data

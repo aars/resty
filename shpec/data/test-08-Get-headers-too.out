@@ -1,0 +1,51 @@
+# [OUT] TEST 8: Get headers too
+* <url> malformed
+* <url> malformed
+* About to connect() to 127.0.0.1 port 9090 (#0)
+*   Trying 127.0.0.1... connected
+* Connected to 127.0.0.1 (127.0.0.1) port 9090 (#0)
+> GET /simple.html HTTP/1.1
+> User-Agent: curl/7.21.7 (x86_64-apple-darwin10.7.0) libcurl/7.21.7 OpenSSL/1.0.0d zlib/1.2.5 libidn/1.22
+> Host: 127.0.0.1:9090
+> Accept: */*
+> 
+* HTTP 1.0, assume close after body
+< HTTP/1.0 200 OK
+< Cache-Control: private
+< Content-Type: text/html; charset=us-ascii
+< Server: lilhttpd/1.0
+< Connection: close
+< Content-Length: 2340
+< 
+{ [data not shown]
+* Closing connection #0
+   [1]fork me on github
+
+Resty
+Test
+Page
+     __________________________________________________________________
+
+Hello There.
+
+   CAPTION: Table 1: Pets you can adopt.
+
+       #
+     name
+    species
+     price
+   available
+   1        bugs   rabbit   $1.25 Jun 24 2009
+   2        rascal dog      $3.50 Apr 1 2010
+   3        rufus  dog      $0.25 Jun 17 2009
+   4        scabby bird     $0.02 Jun 04 2009
+   5        roger  goldfish $0.02 Jun 05 2009
+
+   The table on the right has sortable columns. Click on the column
+   headings to sort and re-sort that column. The rain in Spain falls
+   mainly on the plain. Thanks!
+     __________________________________________________________________
+
+References
+
+http://github.com/micha/resty

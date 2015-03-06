@@ -1,0 +1,8 @@
+#  -*-  restclient -*-
+# [REQ] TEST 6: basic OPTIONS request
+HTTP/1.0 200 OK
+Cache-Control: private
+Content-Type: text/plain
+Server: lilhttpd/1.0
+Connection: close
+Content-Length: 168

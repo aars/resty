@@ -1,0 +1,2 @@
+# [OUT] TEST 13: make sure the default options are correctly set
+{"foo":[1,2,3],"bar":{"dog":"woof","cat":"meow","fish":"banana"}}

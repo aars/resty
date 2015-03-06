@@ -1,0 +1,7 @@
+#  -*-  restclient -*-
+# [REQ] TEST 13: make sure the default options are correctly set
+GET /simple.json HTTP/1.1
+Authorization: Basic dXNlcjpwYXNz
+User-Agent: curl/7.21.7 (x86_64-apple-darwin10.7.0) libcurl/7.21.7 OpenSSL/1.0.0d zlib/1.2.5 libidn/1.22
+Host: 127.0.0.1:9090
+Accept: application/json
