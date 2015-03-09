@@ -1,4 +1,4 @@
-Resty
+Resty [![Build Status](https://drone.io/github.com/micha/resty/status.png)](https://drone.io/github.com/micha/resty/latest)
 =====
 
 *Resty* is a tiny script wrapper for [curl](http://curl.haxx.se/). It
