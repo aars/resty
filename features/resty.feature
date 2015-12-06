@@ -3,12 +3,7 @@ Feature: Querying an API
   As an Api builder and/or consumer
   I want to be able to query easily any api
 
-Scenario: I can run a cucumber test
-  Given a file named "file.txt" with:
-   """
-   Hello Resty
-   """
-  Then the file "file.txt" should contain:
-   """
-   Hello Resty
-   """
+Scenario: I can get Resty version
+    When I successfully run `./resty`
+    And I call `resty -v`
+    Then the output should contain "http"
