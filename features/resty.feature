@@ -4,6 +4,12 @@ Feature: Querying an API
   I want to be able to query easily any api
 
 Scenario: I can get Resty version
-    When I successfully run `./resty`
-    And I call `resty -v`
-    Then the output should contain "http"
+    When I call `resty`
+    Then the output should contain "http://localhost*"
+
+
+Scenario: Dry run give some good output
+    When I call `resty GET / --dry-run`
+    Then the output should contain "curl -sLv"
+    And  the output should contain "-X GET"
+    And  the output should contain "http://localhost/"
