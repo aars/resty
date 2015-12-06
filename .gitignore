@@ -2,3 +2,10 @@
 *.swo
 *~
 .DS_Store
+
+/.bundle/
+/Gemfile.lock
+/coverage/
+/doc/
+/pkg/
+/tmp/
