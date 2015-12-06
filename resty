@@ -1,5 +1,4 @@
-#
-# resty - A tiny command line REST interface for bash and zsh.
+# resty - A tiny command line REST interface for bash and zsh.  -*- mode: sh -*-
 #
 # Fork me on github:
 #   http://github.com/micha/resty
