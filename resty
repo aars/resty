@@ -21,7 +21,6 @@ export _RESTY_NO_HISTORY=""
 # TODO: global var holers
 export _RESTY_DATA_DIR _RESTY_CONF_DIR;
 
-
 function resty() {
   if [ -n "$XDG_CONFIG_HOME" ]; then
     _RESTY_CONF_DIR="$XDG_CONFIG_HOME/resty"
@@ -30,23 +29,47 @@ function resty() {
     _RESTY_CONF_DIR="$HOME/.resty"
     _RESTY_DATA_DIR="$_RESTY_CONF_DIR"
   fi
+  
+  # Make sure conf_dir exists
   mkdir -p "$_RESTY_CONF_DIR"
-
   local host="$_RESTY_DATA_DIR/host"
-  
+  local remote=$(cat $host 2>/dev/null) 
+
+  # We can only continue with a host/remote
+  if [[ -z "$remote" && -z "$1" ]]; then
+    echo "No remote configured."
+    echo
+    echo "Usage:" 
+    echo "  source $(basename $0) [-W] [remote]   # load function into shell"
+    echo "  $(basename $0) <remote> [OPTIONS]     # set the remote"
+    return
+  fi
+
+  # Only print current URI base as default behaviour on calling resty,
+  # or when requested with -v
+  if [[ -z "$1" || "$1" = "-v" ]]; then 
+    if [ "$remote" ]
+      then echo $remote
+      else echo "No remote configured."
+    fi
+    return 
+  fi
+
+  # Set new remote
   local url=$1
-  
-  case "$url" in
-    http://*|https://*)
-      _resty_opts=$(printf '%q ' "${curlopt[@]}")
-      export _resty_opts
-      echo "$url" |grep '\*' >/dev/null || url="${url}*"
-      (echo "$url" |tee "${_RESTY_NO_HISTORY:-$host}") |cat 1>&2 && export _RESTY_HOST="$url"
-    ;;
-    *)
-      resty "http://$url" "${@[@]}"
-    ;;
-  esac
+  if [ -n "$url" ]; then
+    case "$url" in
+      http://*|https://*)
+        _resty_opts=$(printf '%q ' "${curlopt[@]}")
+        export _resty_opts
+        echo "$url" |grep '\*' >/dev/null || url="${url}*"
+        (echo "$url" | tee "${_RESTY_NO_HISTORY:-$host}") | cat 1>&2 && export _RESTY_HOST="$url"
+      ;;
+      *)
+        resty "http://$url" "${@[@]}"
+      ;;
+    esac
+  fi
 }
 
 
