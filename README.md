@@ -84,6 +84,7 @@ Usage
                     this prints the saved curl options along with the current
                     URI base. Otherwise this is passed to curl for verbose
                     curl output.
+      --dry-run     Just output the curl command.
       <curl opt>    Any curl options will be passed down to curl.
 
 Configuration, Data File Locations
@@ -365,6 +366,8 @@ Since resty creates the REST verb functions in the shell, when using it from a s
       GET /users | jsawk 'this.disabled = false' | PUT
 
 Here the `-W` option was used when loading the script to prevent writing to the history file and an initial URI base was set at the same time. Then a JSON file was fetched, edited using [jsawk](http://github.com/micha/jsawk), and re-uploaded to the server.
+
+To assign the response of resty to a variable you can you do for example: `VAR="$(GET /some/request)"`. Note that the quote symbol (`"`) around the subcommand is necessary if the output contains spaces.
 
 Working With JSON or XML Data
 =============================
