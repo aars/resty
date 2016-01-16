@@ -3,9 +3,9 @@ Feature: Querying an API
   As an Api builder and/or consumer
   I want to be able to query easily any api
 
-Scenario: I can get Resty version
+Scenario: Resty missing basic configuration
     When I call `resty`
-    Then the output should contain "http://localhost*"
+    Then the output should contain "No remote configured"
 
 
 Scenario: Dry run give some good output
