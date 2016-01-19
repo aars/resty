@@ -12,6 +12,11 @@
 #   Adriean Khisbe <adriean.khisbe@live.fr>
 #
 
+function usage() {
+  echo "Usage:" 
+  echo "  source resty [-W] [<remote>]   # load function into shell"
+  echo "  resty <remote> [OPTIONS]     # set the remote"
+}
 
 export _RESTY_HOST="" # TODO: to upper case!
 export _RESTY_PATH=""
@@ -23,6 +28,7 @@ export _RESTY_DATA_DIR _RESTY_CONF_DIR;
 
 function resty() {
   if [ -n "$XDG_CONFIG_HOME" ]; then
+    # TODO: What is XDG? And why force XDG_DATA_HOME only here? 
     _RESTY_CONF_DIR="$XDG_CONFIG_HOME/resty"
     _RESTY_DATA_DIR="$XDG_DATA_HOME/resty"
   else
@@ -39,9 +45,7 @@ function resty() {
   if [[ -z "$remote" && -z "$1" ]]; then
     echo "No remote configured."
     echo
-    echo "Usage:" 
-    echo "  source $(basename $0) [-W] [remote]   # load function into shell"
-    echo "  $(basename $0) <remote> [OPTIONS]     # set the remote"
+    usage
     return 1
   fi
 
@@ -55,18 +59,22 @@ function resty() {
     return 0
   fi
 
-  # Set new remote
+  # Set new rem
   local url=$1
   if [ -n "$url" ]; then
     case "$url" in
       http://*|https://*)
         _resty_opts=$(printf '%q ' "${curlopt[@]}")
         export _resty_opts
+
         echo "$url" |grep '\*' >/dev/null || url="${url}*"
         (echo "$url" | tee "${_RESTY_NO_HISTORY:-$host}") | cat 1>&2 && export _RESTY_HOST="$url"
       ;;
       *)
-        resty "http://$url" "${@[@]}"
+        echo "Unsupported protocol."
+        echo "Supported: http, https"
+        echo
+        usage
       ;;
     esac
   fi
@@ -248,6 +256,10 @@ function resty-load-alias(){
   alias HEAD=resty-head OPTIONS=resty-options GET=resty-get POST=resty-post PUT=resty-put
   alias TRACE=resty-trace PATCH=resty-patch DELETE=resty-delete
   # maybe add option?
+}
+
+function GET() {
+  resty-get $@
 }
 
 resty-load-alias # Loaded by default. Latter do an option
