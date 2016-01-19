@@ -17,13 +17,18 @@ class TestAPI
   end
 
   def self.start(port)
-    server = WEBrick::HTTPServer.new(
+    # Don't try to start server on same port again.
+    # Maybe using Background is not the best solution here.
+    unless @server.nil? or port!=@port then return end
+
+    @port   = port
+    @server = WEBrick::HTTPServer.new(
       Port: port,
       Logger: WEBrick::Log.new('/dev/null'),
       AccessLog: [nil, nil]
     )
 
-    server.mount_proc '/' do |req, res|
+    @server.mount_proc '/' do |req, res|
       resource = @resources["#{req.request_method}:#{req.path}"]
 
       unless resource
@@ -46,7 +51,7 @@ class TestAPI
     end
 
     Thread.new do
-      server.start
+      @server.start
     end
   end
 end

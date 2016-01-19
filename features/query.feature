@@ -9,6 +9,12 @@ Feature: Querying an API
     And I have a server on port 7777 with the following resources
     | path   | method | status | body         | headers |
     | /hello | GET    | 403    | Hello world! | Content-Type: application/json, bla: boe |
+  
+  Scenario: I can get the exact curl command resty would run
+    When I call `GET /hello --dry-run`
+    Then the output should contain "curl -sLv"
+    And  the output should contain "-X GET"
+    And  the output should contain "http://127.0.0.1:7777/hello"
 
   Scenario: I can GET a resource
     When I call `GET /hello -v`
