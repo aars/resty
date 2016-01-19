@@ -125,23 +125,26 @@ function resty-call() {
   fi
 
   local -a curlopt_cmd curlopt_file
-  local raw query vimedit quote maybe_query verbose
+  local raw query vimedit quote maybe_query verbose dry
   for opt in "$@"; do
     if [ -n "$maybe_query" -a -z "$query" ]; then query="?$opt"; continue; fi
 
     case $opt in
         # TODO; try adapt ; echo "$opt" | grep '^-[a-zA-Z]*v[a-zA-Z]*$' >/dev/null) \
-        --verbose|-v) verbose="yes";;
-        -V) vimedit="yes";;
-        -Z) raw="yes";;
-        -W) ;; # §todo: check why nothing?
-        -Q) quote="yes";;
-        -q) maybe_query="yes";;
-        *) curlopt_cmd+=("$opt")
+        --verbose|-v)   verbose="yes";;
+        -V)             vimedit="yes";;
+        --dry-run)      dry="yes";;
+        -Z)             raw="yes";;
+        -W);; # §todo: check why nothing?
+        -Q)             quote="yes";;
+        -q)             maybe_query="yes";;
+        # All other options go straight to curl
+        *)              curlopt_cmd+=("$opt")
     esac
     ## idea: add --json, other option.
   done
   
+  echo $dry
   if [ -z "$quote" ]; then # replace special char with codes
     _path=$(echo "$_path" | sed 's/%/%25/g;s/\[/%5B/g;s/\]/%5D/g;s/|/%7C/g;s/\$/%24/g;s/&/%26/g;s/+/%2B/g;s/,/%2C/g;s/:/%3A/g;s/;/%3B/g;s/=/%3D/g;s/?/%3F/g;s/@/%40/g;s/ /%20/g;s/#/%23/g;s/{/%7B/g;s/}/%7D/g;s/\\/%5C/g;s/\^/%5E/g;s/~/%7E/g;s/`/%60/g')
   fi
