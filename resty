@@ -129,7 +129,7 @@ function resty-call() {
   fi
 
   local -a curlopt_cmd curlopt_file
-  local raw query vimedit quote maybe_query verbose dry
+  local raw query vimedit quote maybe_query verbose dry output_handler
   for opt in "$@"; do
     if [ -n "$maybe_query" -a -z "$query" ]; then query="?$opt"; continue; fi
 
@@ -248,10 +248,17 @@ function resty-call() {
   if [ -n "$err" -a -n "$verbose" ]; then echo "$err" 1>&2 ; fi
   
   # Normal output always goes to stdout
-
-  # Use output handler for this content_type? 
-  if [[ -z "$raw" && -n "$content_type" && ${RESTY_OUTPUT_HANDLER[$content_type]} ]]; then
-    echo "$out" | ${RESTY_OUTPUT_HANDLER[$content_type]}
+ 
+  # Use output handler for this content_type?
+  # FIXME For some reason the output_handler var ends up in our environment/shell. Weird
+  if [[ -z "$raw" && -n "$content_type" && -n "${RESTY_OUTPUT_HANDLER[@]}" ]]; then
+    output_handler=${RESTY_OUTPUT_HANDLER[$content_type]}
+  fi
+  
+  # Don't use output handler for raw output
+  if [[ -z "$raw" && -n "$output_handler" ]]; then
+    echo "output handled by '$output_handler'" >&2
+    echo "$out" | $output_handler
   else
     echo "$out"
   fi
