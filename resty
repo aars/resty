@@ -105,12 +105,6 @@ function resty-call() {
     cookiejar="$_RESTY_DATA_DIR/cookies/$domain"
   fi
 
-  # §maybe cache
-  local h2t=$(
-    (exec 2>&-; 
-      (which lynx >/dev/null && echo lynx -stdin -dump) || which html2text || which cat
-    ) | tail -n 1
-  ); # torename
   local editor=$(
     (exec 2>&-; which "$EDITOR" || which vim || echo "vi") | tail -n 1
   ); # editor default
@@ -243,34 +237,27 @@ function resty-call() {
   cmd="($cmd | sed 's/^/OUT /' && echo) 3>&2 2>&1 1>&3"
   cmd="(($cmd) | sed 's/^/ERR /' && echo) 2>&1"
   res=$(eval $cmd)
-
+  
   out=$(sed '/^OUT /s/^....//p; d' <<< "$res" )
   err=$(sed '/^ERR /s/^....//p; d' <<< "$res" )
+
   http_status=$(sed '/^.*HTTP\/1\.[01] [0-9][0-9][0-9]/s/.*\([0-9][0-9][0-9]\).*/\1/p; d' <<< "$err" | tail -n1)
-  ret=${http_status:0:1}
-  
+  # FIXME Maybe a bit to strict matching on content-type value
+  content_type=$(sed '/^.*Content-Type: .*/s/.*: \([A-Za-z0-9\/]*\).*/\1/p; d' <<< "$err" | xargs | tail -n 1)
+   
   if [ -n "$err" -a -n "$verbose" ]; then echo "$err" 1>&2 ; fi
+  
+  # Normal output always goes to stdout
 
-  local display
-  if [ -z "$raw" ] && grep -i '^< \s*Content-Type:  *text/html' >/dev/null <<< "$err"
-  then display=$h2t
-  else display=cat
-  fi
-
-  if [ -n "$out" ]; then out=$(echo "$out" | "$display") ; fi
-
-  # todo: also filter elinks and co
-  if  [[ ! "lynx" =~ "$display" ]] ; then # perlicize to make it more readable
-    out=$(echo "$out" |perl -e "\$host='$(echo "$_RESTY_HOST" |sed 's/^\(https*:\/\/[^\/*]*\).*$/\1/')';" \
-          -e '@a=<>; $s=0; foreach (reverse(@a)) { if ($_ =~ /^References$/) { $s++; } unless ($s>0) { s/^\s+[0-9]+\. //; s/^file:\/\/localhost/$host/; } push(@ret,$_); } print(join("",reverse(@ret)))')
-  fi
-
-  if [ "$ret" != "2" ]; then
-    [ -n "$out" ] && echo "$out" 1>&2
-    return $ret
+  # Use output handler for this content_type? 
+  if [[ -z "$raw" && -n "$content_type" && ${RESTY_OUTPUT_HANDLER[$content_type]} ]]; then
+    echo "$out" | ${RESTY_OUTPUT_HANDLER[$content_type]}
   else
-    [ -n "$out" ] && echo "$out"
+    echo "$out"
   fi
+
+  # Output other info to stderr
+  echo "HTTP status: $http_status" 1>&2
 }
 
 resty-load-functions() {
