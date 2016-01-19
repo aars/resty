@@ -31,5 +31,5 @@ Given(/^the server responds to ([A-Z]+) on (\/.+) with status ([0-9]{3})?(?: and
 end
 
 When(/^I call `([^`]*)`$/) do |cmd|
-  run_simple("bash -c '. ../../resty #{@resty_url}; #{cmd}'", fail_on_error: false)
+  run_simple("bash -c 'source ../../resty #{@resty_url}; #{cmd}'", fail_on_error: false)
 end

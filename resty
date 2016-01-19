@@ -22,9 +22,10 @@ export _RESTY_HOST="" # TODO: to upper case!
 export _RESTY_PATH=""
 export _RESTY_NO_HISTORY=""
 
-
 # TODO: global var holers
 export _RESTY_DATA_DIR _RESTY_CONF_DIR;
+
+_RESTY_METHODS=(HEAD OPTIONS GET POST PUT TRACE PATCH DELETE)
 
 function resty() {
   if [ -n "$XDG_CONFIG_HOME" ]; then
@@ -87,8 +88,8 @@ function resty-call() {
 
   # this check only makes sense for broken internal usage or users calling
   # resty-call directly. Which they probably shouldn't. Keep it?
-  if [[ ! "HEAD OPTIONS GET PATCH POST PUT TRACE DELETE" =~ "$method" ]]; then # this is not good (why?)
-    echo "First arg must be an HTTP verb, '$method' isn't" >&2
+  if [[ ! "${_RESTY_METHODS[*]}" =~ "$method" ]]; then # this is not good (why?)
+    echo "First argument must be an HTTP verb, '$method' isn't" >&2
     return 1
   fi
 
@@ -252,54 +253,13 @@ function resty-call() {
   fi
 }
 
-function resty-load-alias(){
-  alias HEAD=resty-head OPTIONS=resty-options GET=resty-get POST=resty-post PUT=resty-put
-  alias TRACE=resty-trace PATCH=resty-patch DELETE=resty-delete
-  # maybe add option?
+resty-load-functions() {
+  for i in ${_RESTY_METHODS[@]}
+  do
+    eval "$i() { resty-call $i \"\$@\"; }"
+  done
 }
-
-function GET() {
-  resty-get $@
-}
-
-resty-load-alias # Loaded by default. Latter do an option
-
-function resty-unload-alias(){
-  unalias HEAD OPTIONS GET POST PUT TRACE PATCH DELETE
-}
-
-# TODO: option to have or not head as alias? resty-head?
-function resty-head() {
-  resty-call HEAD "$@"
-}
-
-function resty-options() {
-  resty-call OPTIONS "$@"
-}
-
-function resty-get() {
-  resty-call GET "$@"
-}
-
-function resty-post() {
-  resty-call POST "$@"
-}
-
-function resty-put() {
-  resty-call PUT "$@"
-}
-
-function resty-patch() {
-  resty-call PATCH "$@"
-}
-
-function resty-delete() {
-  resty-call DELETE "$@"
-}
-
-function resty-trace() {
-  resty-call TRACE "$@"
-}
+resty-load-functions
 
 # With -W option, does not write to history file
 [ "$1" = "-W" ] && export _RESTY_NO_HISTORY="/dev/null" && [[ $# > 0 ]] && shift
