@@ -19,7 +19,6 @@ function usage() {
 }
 
 export _RESTY_HOST="" # TODO: to upper case!
-export _RESTY_PATH=""
 export _RESTY_NO_HISTORY=""
 
 # TODO: global var holers
@@ -29,7 +28,6 @@ _RESTY_METHODS=(HEAD OPTIONS GET POST PUT TRACE PATCH DELETE)
 
 function resty() {
   if [ -n "$XDG_CONFIG_HOME" ]; then
-    # TODO: What is XDG? And why force XDG_DATA_HOME only here? 
     _RESTY_CONF_DIR="$XDG_CONFIG_HOME/resty"
     _RESTY_DATA_DIR="$XDG_DATA_HOME/resty"
   else
@@ -60,25 +58,23 @@ function resty() {
     return 0
   fi
 
-  # Set new rem
+  # Set new remote
   local url=$1
-  if [ -n "$url" ]; then
-    case "$url" in
-      http://*|https://*)
-        _resty_opts=$(printf '%q ' "${curlopt[@]}")
-        export _resty_opts
+  case "$url" in
+    http://*|https://*)
+      _resty_opts=$(printf '%q ' "${curlopt[@]}")
+      export _resty_opts
 
-        echo "$url" |grep '\*' >/dev/null || url="${url}*"
-        (echo "$url" | tee "${_RESTY_NO_HISTORY:-$host}") | cat 1>&2 && export _RESTY_HOST="$url"
-      ;;
-      *)
-        echo "Unsupported protocol."
-        echo "Supported: http, https"
-        echo
-        usage
-      ;;
-    esac
-  fi
+      echo "$url" |grep '\*' >/dev/null || url="${url}*"
+      (echo "$url" | tee "${_RESTY_NO_HISTORY:-$host}") | cat 1>&2 && export _RESTY_HOST="$url"
+    ;;
+    *)
+      echo "Unsupported protocol."
+      echo "Supported: http, https"
+      echo
+      usage
+    ;;
+  esac
 }
 
 function resty-call() {
